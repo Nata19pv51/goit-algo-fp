@@ -1,43 +1,47 @@
-import networkx as nx
+import heapq
 
 
-def dijkstra(graph, start):
-    # Ініціалізація відстаней та множини невідвіданих вершин
-    distance_between_cities = {vertex: float('infinity') for vertex in graph}
-    distance_between_cities[start] = 0
-    unvisited = set(graph.nodes())
+def dijkstra(graph, start_node):
+    # Ініціалізація відстаней: всі нескінченні, стартова - 0
+    distances = {node: float('inf') for node in graph}
+    distances[start_node] = 0
     
-    while unvisited:
-        # Знаходження вершини з найменшою відстанню серед невідвіданих
-        current_vertex = min(unvisited, key=lambda vertex: distance_between_cities[vertex])
-
-        # Якщо поточна відстань є нескінченністю, то ми завершили роботу
-        if distance_between_cities[current_vertex] == float('infinity'):
-            break
+    priority_queue = [(0, start_node)]
+    
+    while len(priority_queue) > 0:
+        # Вибираємо вершину з найменшою поточною відстанню
+        current_distance, current_node = heapq.heappop(priority_queue)
         
-        for neighbor, attributes in graph.adj[current_vertex].items():
-            if "distance" not in attributes:
-                continue
+        if current_distance > distances[current_node]:
+            continue
+            
+        # Розглядаємо всіх сусідів поточної вершини
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(priority_queue, (distance, neighbor))
                 
-            weight = attributes["distance"]
-            new_distance = distance_between_cities[current_vertex] + weight 
+    return distances
 
-            # Якщо нова відстань коротша, то оновлюємо найкоротший шлях
-            if new_distance < distance_between_cities[neighbor]:
-                distance_between_cities[neighbor] = new_distance
+# --- Приклад використання ---
+if __name__ == "__main__":
+    transport_graph = {
+        'Київ': {'Глеваха': 34, 'Васильків': 50, 'Обухів': 47},
+        'Глеваха': {'Фастів': 48, 'Біла Церква': 59},
+        'Васильків': {'Гребенки': 30, 'Обухів': 35},
+        'Обухів': {'Кагарлик': 33},
+        'Кагарлик': {'Біла Церква': 58, 'Миронівка': 21},
+        'Фастів': {'Біла Церква': 38},
+        'Гребенки': {'Біла Церква': 20},
+        'Біла Церква': {'Тараща': 46},
+        'Миронівка': {},
+        'Тараща': {}
+    }
+    
+start = 'Обухів'
+shortest_paths = dijkstra(transport_graph, start)
 
-        # Видаляємо поточну вершину з множини невідвіданих
-        unvisited.remove(current_vertex)
-
-    return distance_between_cities
-
-G = nx.Graph()
-edges = [
-    ('A', 'B', 5), ('A', 'C', 10),
-    ('B', 'D', 3), ('B', 'E', 8),
-    ('C', 'E', 2), ('D', 'E', 1),
-    ('E', 'F', 6), ('D', 'F', 12)
-]
-
-for u, v, w in edges:
-    G.add_edge(u, v, weight=w)
+print(f"Найкоротші відстані від вершини {start}:")
+for node, distance in shortest_paths.items():
+    print(f"До {node}: {distance}")
