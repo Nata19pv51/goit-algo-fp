@@ -61,5 +61,4 @@ if __name__ == "__main__":
     heapq.heapify(arr)
     root = create_tree(arr)
     
-    # Відображення дерева
     draw_tree(root)

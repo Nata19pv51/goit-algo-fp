@@ -24,7 +24,6 @@ def dijkstra(graph, start_node):
                 
     return distances
 
-# --- Приклад використання ---
 if __name__ == "__main__":
     transport_graph = {
         'Київ': {'Глеваха': 34, 'Васильків': 50, 'Обухів': 47},
@@ -39,7 +38,7 @@ if __name__ == "__main__":
         'Тараща': {}
     }
     
-start = 'Обухів'
+start = 'Київ'
 shortest_paths = dijkstra(transport_graph, start)
 
 print(f"Найкоротші відстані від вершини {start}:")

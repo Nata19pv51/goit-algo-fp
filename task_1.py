@@ -81,11 +81,10 @@ def merge_sort(l_node):
     fast = l_node
     prev = None
     
-    # Поки швидкий вказівник може зробити два кроки
     while fast is not None and fast.next is not None:
         prev = slow
-        slow = slow.next          # один крок
-        fast = fast.next.next     # два кроки
+        slow = slow.next          # робить один крок
+        fast = fast.next.next     # робить два кроки
     
     if prev:
         prev.next = None
@@ -102,7 +101,7 @@ def merger(left, right):
 
     cur_left = left
     cur_right = right
-    # Спочатку об'єднайте менші елементи
+    # Спочатку об'єднуємо менші елементи
     while cur_left is not None and cur_right is not None:
         if cur_left.data <= cur_right.data:
             current.next = cur_left
